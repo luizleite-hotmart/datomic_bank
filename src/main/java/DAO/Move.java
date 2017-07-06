@@ -4,6 +4,8 @@ import datomic.Connection;
 import datomic.Database;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import static DAO.Fns.scratchConnection;
 import static DAO.IO.transactAllFromResource;
@@ -18,9 +20,18 @@ public class Move {
         Connection conn = scratchConnection();
         transactAllFromResource(conn, "datomic_bank/move-schema.edn");
         Database db = conn.db();
+
     }
 
-    public void pullMove(String userId, Long value, String transaction) {
-        Object move = list("")
+    public void txMove(Connection connection, String userId, Long value, String transaction) {
+        Object move = list("");
+        try {
+            Object txResul = connection.transact((List) move).get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
     }
 }
